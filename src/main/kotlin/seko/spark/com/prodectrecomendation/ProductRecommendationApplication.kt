@@ -15,11 +15,11 @@ class ProductRecommendationApplication {
 
     @PostConstruct
     fun init() {
-//        productRecommendation.calculate()
+        productRecommendation.calculate()
     }
 }
 
 fun main(args: Array<String>) {
-//    runApplication<ProductRecommendationApplication>(*args)
-    SpringApplication.run(ProductRecommendationApplication::class.java, *args)
+//    ProductRecommendation().calculate()
+    runApplication<ProductRecommendationApplication>(*args)
 }
