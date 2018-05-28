@@ -47,5 +47,14 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	compile("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	compile("org.jetbrains.kotlin:kotlin-reflect")
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+
+	compile("org.slf4j:log4j-over-slf4j")
+
+}
+
+configurations.all {
+	exclude group: "org.slf4j", module: "slf4j-log4j12"
+	exclude group: "log4j", module: "log4j"
 }
