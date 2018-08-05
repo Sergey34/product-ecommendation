@@ -55,8 +55,9 @@ dependencies {
 
 //	_____________________________________
 
+	compile 'org.apache.spark:spark-streaming-kafka_2.11:1.6.3'
 	compile 'org.apache.spark:spark-streaming-kafka-0-10_2.11:2.3.1'
-	compile 'org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1'
+//	compile 'org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1'
 }
 
 configurations.all {

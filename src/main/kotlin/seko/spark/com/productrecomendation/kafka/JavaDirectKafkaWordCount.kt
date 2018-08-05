@@ -22,9 +22,15 @@ package seko.spark.com.productrecomendation.kafka
 
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.producer.KafkaProducer
+import org.apache.kafka.clients.producer.ProducerConfig
+import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.clients.producer.RecordMetadata
 import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.kafka.common.serialization.StringSerializer
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaPairRDD
+import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.api.java.Optional
 import org.apache.spark.streaming.Durations
 import org.apache.spark.streaming.State
@@ -34,8 +40,9 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext
 import org.apache.spark.streaming.kafka010.ConsumerStrategies
 import org.apache.spark.streaming.kafka010.KafkaUtils
 import org.apache.spark.streaming.kafka010.LocationStrategies
+import scala.Serializable
 import scala.Tuple2
-import java.util.*
+import java.util.concurrent.Future
 import java.util.regex.Pattern
 
 
@@ -65,7 +72,10 @@ object JavaDirectKafkaWordCount {
 
         // Create context with a 2 seconds batch interval
         val sparkConf = SparkConf().setAppName("JavaDirectKafkaWordCount").setMaster("local[*]")
-        jssc = JavaStreamingContext(sparkConf, Durations.seconds(30))
+
+        val javaSparkContext = JavaSparkContext(sparkConf)
+
+        jssc = JavaStreamingContext(javaSparkContext, Durations.seconds(30))
         jssc.checkpoint("./checkpoint")
 
         val topicsSet = topics.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toSet()
@@ -73,7 +83,9 @@ object JavaDirectKafkaWordCount {
         val kafkaParams = mapOf(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
                 ConsumerConfig.GROUP_ID_CONFIG to groupId,
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                "key.serializer" to "org.apache.kafka.common.serialization.StringSerializer",
+                "value.serializer" to "org.apache.kafka.common.serialization.StringSerializer"
         )
 
         // Create direct kafka stream with brokers and topics
@@ -101,6 +113,23 @@ object JavaDirectKafkaWordCount {
 
         stateDstream.print()
 
+
+        val prop = mutableMapOf<String, String>()
+        prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
+        prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
+        prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
+
+
+        val kafkaSink = javaSparkContext.broadcast(KafkaSink(prop, createProducer = { parms -> KafkaProducer(parms) }))
+
+        stateDstream.foreachRDD { rdd ->
+            rdd.foreachPartition { partitionOfRecords ->
+                partitionOfRecords.forEach { message ->
+                    kafkaSink.value.send("wc-result", message)
+                }
+            }
+        }
+
         // Start the computation
         jssc.start()
         jssc.awaitTermination()
@@ -111,3 +140,15 @@ object JavaDirectKafkaWordCount {
     }
 }
 
+class KafkaSink(var parms: Map<String, String>, var createProducer: (parms: Map<String, String>) -> KafkaProducer<String, String>) : Serializable {
+
+    var producer: KafkaProducer<String, String>? = null
+
+    fun send(topic: String, value: Tuple2<String, Int>): Future<RecordMetadata> {
+        if (producer == null) {// потому что надо как-то сериализовать несириализуемое....
+            producer = createProducer(parms)
+        }
+        return producer?.send(ProducerRecord(topic, value.toString()))!!
+    }
+
+}
