@@ -1,4 +1,4 @@
-package seko.spark.com.prodectrecomendation
+package seko.spark.com.productrecomendation
 
 import org.junit.Test
 import org.junit.runner.RunWith

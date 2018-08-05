@@ -1,4 +1,4 @@
-package seko.spark.com.prodectrecomendation
+package seko.spark.com.productrecomendation.rdd
 
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaSparkContext

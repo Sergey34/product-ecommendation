@@ -1,11 +1,8 @@
-package seko.spark.com.prodectrecomendation
+package seko.spark.com.productrecomendation.rdd
 
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
 import javax.annotation.PostConstruct
 
 @SpringBootApplication
