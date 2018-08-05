@@ -25,10 +25,10 @@ import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaPairRDD
+import org.apache.spark.api.java.Optional
 import org.apache.spark.streaming.Durations
 import org.apache.spark.streaming.State
 import org.apache.spark.streaming.StateSpec
-import org.apache.spark.api.java.Optional
 import org.apache.spark.streaming.api.java.JavaInputDStream
 import org.apache.spark.streaming.api.java.JavaStreamingContext
 import org.apache.spark.streaming.kafka010.ConsumerStrategies
@@ -68,12 +68,13 @@ object JavaDirectKafkaWordCount {
         jssc = JavaStreamingContext(sparkConf, Durations.seconds(30))
         jssc.checkpoint("./checkpoint")
 
-        val topicsSet = HashSet(Arrays.asList(*topics.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()))
-        val kafkaParams = HashMap<String, Any>()
-        kafkaParams[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = brokers
-        kafkaParams[ConsumerConfig.GROUP_ID_CONFIG] = groupId
-        kafkaParams[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
-        kafkaParams[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        val topicsSet = topics.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toSet()
+
+        val kafkaParams = mapOf(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
+                ConsumerConfig.GROUP_ID_CONFIG to groupId,
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
+        )
 
         // Create direct kafka stream with brokers and topics
         val messages: JavaInputDStream<ConsumerRecord<String, String>> = KafkaUtils.createDirectStream(
@@ -83,7 +84,7 @@ object JavaDirectKafkaWordCount {
 
         // Get the lines, split them into words, count the words and print
         val lines = messages.map { it.value() }
-        val words = lines.flatMap { x -> Arrays.asList(*SPACE.split(x)).iterator() }
+        val words = lines.flatMap { x -> listOf(*SPACE.split(x)).iterator() }
         val wordsDstream = words
                 .mapToPair { s -> Tuple2<String, Int>(s, 1) }
                 .reduceByKey { i1, i2 -> i1 + i2 }
@@ -106,8 +107,7 @@ object JavaDirectKafkaWordCount {
     }
 
     private fun getInitialRDD(): JavaPairRDD<String, Int> {
-        val tuples:List<Tuple2<String,Int>> = listOf()
-        return jssc.sparkContext().parallelizePairs(tuples)
+        return jssc.sparkContext().parallelizePairs(listOf())
     }
 }
 
