@@ -83,9 +83,7 @@ object JavaDirectKafkaWordCount {
         val kafkaParams = mapOf(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
                 ConsumerConfig.GROUP_ID_CONFIG to groupId,
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                "key.serializer" to "org.apache.kafka.common.serialization.StringSerializer",
-                "value.serializer" to "org.apache.kafka.common.serialization.StringSerializer"
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
         )
 
         // Create direct kafka stream with brokers and topics
@@ -114,10 +112,10 @@ object JavaDirectKafkaWordCount {
         stateDstream.print()
 
 
-        val prop = mutableMapOf<String, String>()
-        prop.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
-        prop.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
-        prop.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer::class.java.name)
+        val prop = mutableMapOf<String, String>(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name)
 
 
         val kafkaSink = javaSparkContext.broadcast(KafkaSink(prop, createProducer = { parms -> KafkaProducer(parms) }))
@@ -142,7 +140,7 @@ object JavaDirectKafkaWordCount {
 
 class KafkaSink(var parms: Map<String, String>, var createProducer: (parms: Map<String, String>) -> KafkaProducer<String, String>) : Serializable {
 
-    var producer: KafkaProducer<String, String>? = null
+    private var producer: KafkaProducer<String, String>? = null
 
     fun send(topic: String, value: Tuple2<String, Int>): Future<RecordMetadata> {
         if (producer == null) {// потому что надо как-то сериализовать несириализуемое....
