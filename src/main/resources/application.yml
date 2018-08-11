@@ -1,0 +1,10 @@
+kafka:
+  brokers: 192.168.0.106:9092
+  groupId: wc
+  inputTopics: wc-topic
+  outputTopic: wc-result
+spark:
+  master: local[*]
+  appName: ProductRecommendation
+  checkpointDirectory: ./checkpoint
+  durations: 30

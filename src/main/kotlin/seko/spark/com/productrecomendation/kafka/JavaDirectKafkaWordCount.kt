@@ -47,16 +47,16 @@ import java.util.regex.Pattern
 
 
 /**
- * Consumes messages from one or more topics in Kafka and does wordcount.
- * Usage: JavaDirectKafkaWordCount <brokers> <groupId> <topics>
+ * Consumes messages from one or more inputTopics in Kafka and does wordcount.
+ * Usage: JavaDirectKafkaWordCount <brokers> <groupId> <inputTopics>
  * <brokers> is a list of one or more Kafka brokers
- * <groupId> is a consumer group name to consume from topics
- * <topics> is a list of one or more kafka topics to consume from
+ * <groupId> is a consumer group name to consume from inputTopics
+ * <inputTopics> is a list of one or more kafka inputTopics to consume from
  *
  * Example:
  * $ bin/run-example streaming.JavaDirectKafkaWordCount broker1-host:port,broker2-host:port \
  * consumer-group topic1,topic2
-</topics></groupId></brokers></topics></groupId></brokers> */
+</inputTopics></groupId></brokers></inputTopics></groupId></brokers> */
 
 object JavaDirectKafkaWordCount {
     private val SPACE = Pattern.compile(" ")
@@ -86,7 +86,7 @@ object JavaDirectKafkaWordCount {
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
         )
 
-        // Create direct kafka stream with brokers and topics
+        // Create direct kafka stream with brokers and inputTopics
         val messages: JavaInputDStream<ConsumerRecord<String, String>> = KafkaUtils.createDirectStream(
                 jssc,
                 LocationStrategies.PreferConsistent(),
@@ -118,7 +118,7 @@ object JavaDirectKafkaWordCount {
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name)
 
 
-        val kafkaSink = javaSparkContext.broadcast(KafkaSink(prop, createProducer = { parms -> KafkaProducer(parms) }))
+        val kafkaSink = javaSparkContext.broadcast(KafkaSinkWc(prop, createProducer = { parms -> KafkaProducer(parms) }))
 
         stateDstream.foreachRDD { rdd ->
             rdd.foreachPartition { partitionOfRecords ->
@@ -138,7 +138,7 @@ object JavaDirectKafkaWordCount {
     }
 }
 
-class KafkaSink(var parms: Map<String, String>, var createProducer: (parms: Map<String, String>) -> KafkaProducer<String, String>) : Serializable {
+class KafkaSinkWc(var parms: Map<String, String>, var createProducer: (parms: Map<String, String>) -> KafkaProducer<String, String>) : Serializable {
 
     private var producer: KafkaProducer<String, String>? = null
 
