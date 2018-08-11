@@ -1,98 +1,24 @@
 package seko.spark.com.productrecomendation.kafka
 
-import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.clients.producer.KafkaProducer
-import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.StringDeserializer
-import org.apache.kafka.common.serialization.StringSerializer
-import org.apache.spark.SparkConf
 import org.apache.spark.api.java.JavaPairRDD
-import org.apache.spark.api.java.JavaSparkContext
 import org.apache.spark.api.java.Optional
-import org.apache.spark.streaming.Durations
+import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.streaming.State
 import org.apache.spark.streaming.StateSpec
 import org.apache.spark.streaming.api.java.JavaInputDStream
 import org.apache.spark.streaming.api.java.JavaStreamingContext
-import org.apache.spark.streaming.kafka010.ConsumerStrategies
-import org.apache.spark.streaming.kafka010.KafkaUtils
-import org.apache.spark.streaming.kafka010.LocationStrategies
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import scala.Serializable
 import scala.Tuple2
+import seko.spark.com.productrecomendation.kafka.infrastracture.AutowiredBroadcast
 import java.util.*
-import javax.annotation.PostConstruct
 
-@Component
-class ProductRecommendation : Serializable {
-    @Value("\${kafka.brokers}")
-    lateinit var brokers: String //= "192.168.0.106:9092"
-    @Value("\${kafka.groupId}")
-    lateinit var groupId: String // = "wc"
-    @Value("\${kafka.outputTopic}")
-    lateinit var outputTopic: String // = "wc"
-    @Value("\${kafka.inputTopics}")
-    lateinit var inputTopics: Array<String> //= "wc-topic"
+class ProductRecommendation @Autowired constructor(var kafkaSink: Broadcast<KafkaSink>,
+                                                   var mappingFunc: Broadcast<Function3<Any, Optional<List<Tuple2<Any, Int>>>, State<List<Tuple2<Any, Int>>>, Tuple2<Any, List<Tuple2<Any, Int>>>>>): Serializable {
 
-    @Value("\${spark.master}")
-    lateinit var master: String //"local[*]"
-    @Value("\${spark.appName}")
-    lateinit var appName: String //"ProductRecommendation"
-    @Value("\${spark.checkpointDirectory}")
-    lateinit var checkpointDirectory: String //"./checkpoint"
-    @Value("\${spark.durations}")
-    var durations: Long = 5 //30l
-
-    lateinit var kafkaConsumerProperties: Map<String, java.io.Serializable>
-    lateinit var kafkaProducerProperties: MutableMap<String, String>
-
-    @PostConstruct
-    fun initKafkaParams() {
-
-        kafkaConsumerProperties = mapOf(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
-                ConsumerConfig.GROUP_ID_CONFIG to groupId,
-                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java,
-                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG to StringDeserializer::class.java
-        )
-
-        kafkaProducerProperties = mutableMapOf(
-                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG to brokers,
-                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java.name)
-    }
-
-    val mappingFunc: Function3<Any, Optional<List<Tuple2<Any, Int>>>, State<List<Tuple2<Any, Int>>>, Tuple2<Any, List<Tuple2<Any, Int>>>> =
-            { productId, currentValue, state ->
-                val stateValue = if (state.exists()) state.get() else listOf()//[(12,3),(11,3),(15,2),(1,4)]
-
-                val map = mutableMapOf<Any, Int>()
-                (currentValue.orElse(listOf()) + stateValue).forEach {
-                    map[it._1] = map.getOrDefault(it._1, 0) + it._2
-                }
-                val sum = map.map { Tuple2<Any, Int>(it.key, it.value) }
-
-                val output = Tuple2<Any, List<Tuple2<Any, Int>>>(productId, sum)
-                state.update(sum)
-                output
-            }
-
-    fun calculate() {
-        val sparkConf: SparkConf = SparkConf().setAppName(appName).setMaster(master)
-        val jssc: JavaStreamingContext
-        val javaSparkContext = JavaSparkContext(sparkConf)
-        // Create context with a 2 seconds batch interval
-        jssc = JavaStreamingContext(javaSparkContext, Durations.seconds(durations))
-        jssc.checkpoint(checkpointDirectory)
-
-        // Create direct kafka stream with brokers and inputTopics
-        val stream: JavaInputDStream<ConsumerRecord<String, String>> = KafkaUtils.createDirectStream(
-                jssc,
-                LocationStrategies.PreferConsistent(),
-                ConsumerStrategies.Subscribe(inputTopics.toList(), kafkaConsumerProperties))
-
+    fun calculate(stream: JavaInputDStream<ConsumerRecord<String, String>>, jssc: JavaStreamingContext) {
         val dstream = stream
                 .mapToPair { parseEvent(it.value()) }
                 .reduceByKey { list1, list2 -> list1.union(list2).distinct().sorted() }
@@ -102,17 +28,12 @@ class ProductRecommendation : Serializable {
                 .reduceByKey { a, b -> Integer.sum(a, b) }
                 .flatMapToPair { listOf(Tuple2(it._1._1, listOf(Tuple2(it._1._2, it._2))), Tuple2(it._1._2, listOf(Tuple2(it._1._1, it._2)))).iterator() }
                 .reduceByKey { list1, list2 -> list1.union(list2).toList() }
-                .mapWithState(StateSpec.function(mappingFunc).initialState(getInitialRDD(jssc)))
-
-        dstream.print()
-
-
-        val kafkaSink = javaSparkContext.broadcast(KafkaSink(kafkaProducerProperties, createProducer = { config -> KafkaProducer(config) }))
+                .mapWithState(StateSpec.function(mappingFunc.value).initialState(getInitialRDD(jssc)))
 
         dstream.foreachRDD { rdd ->
             rdd.foreachPartition { partitionOfRecords ->
                 partitionOfRecords.forEach { message ->
-                    kafkaSink.value.send(outputTopic, message)
+                    kafkaSink.value.send(message)
                 }
             }
         }

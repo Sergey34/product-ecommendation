@@ -1,4 +1,4 @@
-package seko.spark.com.productrecomendation.kafka
+package seko.spark.com.kafka.wc
 
 
 /*
