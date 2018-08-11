@@ -8,15 +8,12 @@ import org.apache.spark.streaming.State
 import org.apache.spark.streaming.StateSpec
 import org.apache.spark.streaming.api.java.JavaInputDStream
 import org.apache.spark.streaming.api.java.JavaStreamingContext
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 import scala.Serializable
 import scala.Tuple2
-import seko.spark.com.productrecomendation.kafka.infrastracture.AutowiredBroadcast
 import java.util.*
 
-class ProductRecommendation @Autowired constructor(var kafkaSink: Broadcast<KafkaSink>,
-                                                   var mappingFunc: Broadcast<Function3<Any, Optional<List<Tuple2<Any, Int>>>, State<List<Tuple2<Any, Int>>>, Tuple2<Any, List<Tuple2<Any, Int>>>>>): Serializable {
+class ProductRecommendation constructor(var kafkaSink: Broadcast<KafkaSink>,
+                                        var mappingFunc: Broadcast<Function3<Any, Optional<List<Tuple2<Any, Int>>>, State<List<Tuple2<Any, Int>>>, Tuple2<Any, List<Tuple2<Any, Int>>>>>) : Serializable {
 
     fun calculate(stream: JavaInputDStream<ConsumerRecord<String, String>>, jssc: JavaStreamingContext) {
         val dstream = stream

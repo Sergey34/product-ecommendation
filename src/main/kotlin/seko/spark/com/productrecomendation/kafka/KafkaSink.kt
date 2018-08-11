@@ -19,5 +19,4 @@ class KafkaSink(var kafkaProperties: KafkaProperties, var createProducer: (kafka
         }
         return producer?.send(ProducerRecord(kafkaProperties.outputTopic, value.toString()))!!
     }
-
 }
