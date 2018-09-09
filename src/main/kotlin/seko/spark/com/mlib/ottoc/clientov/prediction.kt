@@ -76,7 +76,34 @@ fun main(args: Array<String>) {
             .setInputCols(arrayOf("intl_plan_indexed") + reducedNumericCols)
             .setOutputCol("features")
 
+
+    /**
+     * Случайные леса - популярное семейство методов классификации и регрессии.
+     * Более подробную информацию о spark.mlреализации можно найти в разделе о случайных лесах
+     * https://spark.apache.org/docs/2.1.0/ml-classification-regression.html#random-forests.
+     * */
     val classifier = RandomForestClassifier().setLabelCol("label").setFeaturesCol("features")
+    /**
+     * Классификатор дерева решений
+     * Деревья принятия решений являются популярным семейством методов классификации и регрессии.
+     * Более подробную информацию о spark.mlреализации можно найти в разделе о деревьях решений
+     * https://spark.apache.org/docs/2.1.0/ml-classification-regression.html#decision-trees
+     * */
+//    val classifier = DecisionTreeClassifier().setLabelCol("label").setFeaturesCol("features")
+    /**
+     * Градиентный древовидный классификатор
+     * Градиентные деревья (GBT) - популярный метод классификации и регрессии с использованием ансамблей деревьев решений.
+     * Более подробную информацию о spark.mlреализации можно найти в разделе GBT
+     * https://spark.apache.org/docs/2.1.0/ml-classification-regression.html#gradient-boosted-trees-gbts
+     * */
+//    val classifier = GBTClassifier().setLabelCol("label").setFeaturesCol("features")
+    /**
+     * Регрессия дерева решений
+     * Деревья принятия решений являются популярным семейством методов классификации и регрессии.
+     * Более подробную информацию о spark.mlреализации можно найти в разделе о деревьях решений.
+     * https://spark.apache.org/docs/2.1.0/ml-classification-regression.html#decision-trees
+     */
+//    val classifier = DecisionTreeRegressor().setLabelCol("label").setFeaturesCol("features")
 
     val pipeline = Pipeline().setStages(arrayOf(stringIndexer, labelIndexer, assembler, classifier))
 
