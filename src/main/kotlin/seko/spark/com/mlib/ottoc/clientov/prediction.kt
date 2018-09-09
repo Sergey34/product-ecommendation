@@ -4,6 +4,7 @@ package seko.spark.com.mlib.ottoc.clientov
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.spark.ml.Pipeline
+import org.apache.spark.ml.PipelineModel
 import org.apache.spark.ml.classification.RandomForestClassifier
 import org.apache.spark.ml.evaluation.BinaryClassificationEvaluator
 import org.apache.spark.ml.feature.StringIndexer
@@ -81,6 +82,9 @@ fun main(args: Array<String>) {
     val pipeline = Pipeline().setStages(arrayOf(stringIndexer, labelIndexer, assembler, classifier))
 
     val model = pipeline.fit(train)
+
+//    model.write().overwrite().save("churn.all/saved")
+//    PipelineModel.read().load("churn.all/saved").transform(test).show()
 
     test.show()
 
