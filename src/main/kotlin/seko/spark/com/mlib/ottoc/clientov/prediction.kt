@@ -91,6 +91,7 @@ fun main(args: Array<String>) {
     val evaluator = BinaryClassificationEvaluator()
 
     val auroc = evaluator.evaluate(predictions)
+    println(auroc)
 //    val auroc = evaluator.evaluate(predictions, {evaluator.metricName: "areaUnderROC"})
 
 
