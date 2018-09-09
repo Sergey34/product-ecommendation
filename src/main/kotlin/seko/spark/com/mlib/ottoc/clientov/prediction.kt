@@ -1,5 +1,6 @@
 package seko.spark.com.mlib.ottoc.clientov
 
+
 import org.apache.log4j.Level
 import org.apache.log4j.Logger
 import org.apache.spark.ml.Pipeline
@@ -14,15 +15,18 @@ import org.apache.spark.sql.types.*
 const val CSV = "csv"
 
 fun main(args: Array<String>) {
-    Logger.getLogger("org.apache.spark").level = Level.WARN
+
+    System.setProperty("hadoop.home.dir", "/home/sergey/IdeaProjects/product-ecommendation/conf")
+
+    Logger.getLogger("org").level = Level.OFF
+    Logger.getLogger("akka").level = Level.OFF
+
 
     val spark = SparkSession
             .builder()
             .master("local[*]")
-            .appName("ottoc")
+            .appName("prediction")
             .orCreate
-
-    val sqlContext = SQLContext(spark)
 
     val schema = StructType(arrayOf(
             StructField("state", `StringType$`.`MODULE$`, true, Metadata.empty()),
@@ -48,7 +52,7 @@ fun main(args: Array<String>) {
             StructField("churned", `StringType$`.`MODULE$`, true, Metadata.empty())))
 
 
-    val dataset = sqlContext.read()
+    val dataset = SQLContext(spark).read()
             .format(CSV)
             .option("delimiter", ",")
             .option("header", true)
@@ -61,11 +65,8 @@ fun main(args: Array<String>) {
     val train = split[0]
     val test = split[1]
 
-
     val labelIndexer = StringIndexer().setInputCol("churned").setOutputCol("label")
-
     val stringIndexer = StringIndexer().setInputCol("intl_plan").setOutputCol("intl_plan_indexed")
-
     val reducedNumericCols = arrayOf("account_length", "number_vmail_messages", "total_day_calls",
             "total_day_charge", "total_eve_calls", "total_eve_charge",
             "total_night_calls", "total_intl_calls", "total_intl_charge")
@@ -80,6 +81,8 @@ fun main(args: Array<String>) {
     val pipeline = Pipeline().setStages(arrayOf(stringIndexer, labelIndexer, assembler, classifier))
 
     val model = pipeline.fit(train)
+
+    test.show()
 
     val predictions = model.transform(test)
 

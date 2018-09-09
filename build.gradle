@@ -50,7 +50,7 @@ dependencies {
 
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 
-	compile("org.slf4j:log4j-over-slf4j")
+//	compile("org.slf4j:log4j-over-slf4j")
 
 
 //	_____________________________________
@@ -61,6 +61,6 @@ dependencies {
 }
 
 configurations.all {
-	exclude group: "org.slf4j", module: "slf4j-log4j12"
-	exclude group: "log4j", module: "log4j"
+//	exclude group: "org.slf4j", module: "slf4j-log4j12"
+//	exclude group: "log4j", module: "log4j"
 }
