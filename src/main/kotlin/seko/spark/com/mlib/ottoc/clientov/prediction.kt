@@ -67,6 +67,7 @@ fun main(args: Array<String>) {
 
     val labelIndexer = StringIndexer().setInputCol("churned").setOutputCol("label")
     val stringIndexer = StringIndexer().setInputCol("intl_plan").setOutputCol("intl_plan_indexed")
+
     val reducedNumericCols = arrayOf("account_length", "number_vmail_messages", "total_day_calls",
             "total_day_charge", "total_eve_calls", "total_eve_charge",
             "total_night_calls", "total_intl_calls", "total_intl_charge")

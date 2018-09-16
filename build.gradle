@@ -58,6 +58,13 @@ dependencies {
 	compile 'org.apache.spark:spark-streaming-kafka-0-10_2.10:2.2.2'
 	compile 'org.apache.spark:spark-streaming-kafka-0-10_2.11:2.3.1'
 	compile 'org.apache.spark:spark-sql-kafka-0-10_2.11:2.3.1'
+
+
+	// https://mvnrepository.com/artifact/org.elasticsearch/elasticsearch-spark-20
+//	compile 'org.elasticsearch:elasticsearch-spark-20_2.11:6.2.3'
+	compile 'org.elasticsearch:elasticsearch-spark-20_2.11:6.3.2'
+
+
 }
 
 configurations.all {

@@ -1,0 +1,303 @@
+[
+  {
+    "_index": "viewing_products",
+    "_type": "doc",
+    "_id": "admin_5b65a5e94240c53b29fe145a",
+    "_score": 1,
+    "_source": {
+      "@timestamp": "2018-08-18T15:55:32.912Z",
+      "sessionId": "admin",
+      "product": {
+        "id": "5b65a5e94240c53b29fe145a",
+        "date": "2018-08-18T19:55:32.906",
+        "description": "The Corsair Gaming Series GS600 is the ideal price/performance choice for mid-spec gaming PC",
+        "title": "Corsair GS600 600 Watt PSU5",
+        "productInfo": "The Corsair Gaming Series GS600 power supply is the ideal price-performance solution for building or upgrading a Gaming PC. A single +12V rail provides up to 48A of reliable, continuous power for multi-core gaming PCs with multiple graphics cards. The ultra-quiet, dual ball-bearing fan automatically adjusts its speed according to temperature, so it will never intrude on your music and games. Blue LEDs bathe the transparent fan blades in a cool glow. Not feeling blue? You can turn off the lighting with the press of a button.",
+        "price": 1239,
+        "category": {
+          "title": "category",
+          "parent": null,
+          "characteristics": [
+            {
+              "name": "cpu",
+              "value": null
+            },
+            {
+              "name": "gpu",
+              "value": null
+            },
+            {
+              "name": "ram",
+              "value": null
+            },
+            {
+              "name": "rom",
+              "value": null
+            },
+            {
+              "name": "box",
+              "value": null
+            },
+            {
+              "name": "fan",
+              "value": null
+            },
+            {
+              "name": "ports",
+              "value": null
+            }
+          ],
+          "description": ""
+        },
+        "characteristic": [],
+        "tags": [
+          "Corsair GS600 600 Watt PSU5",
+          "cpu",
+          "gpu",
+          "ram",
+          "rom",
+          "box",
+          "fan",
+          "ports",
+          "category"
+        ],
+        "account": "test",
+        "enabled": true
+      },
+      "@version": "1"
+    }
+  },
+  {
+    "_index": "viewing_products",
+    "_type": "doc",
+    "_id": "admin_5b65a5e94240c53b29fe145d",
+    "_score": 1,
+    "_source": {
+      "@timestamp": "2018-08-18T15:55:34.830Z",
+      "sessionId": "admin",
+      "product": {
+        "id": "5b65a5e94240c53b29fe145d",
+        "date": "2018-08-18T19:55:34.826",
+        "description": "The Corsair Gaming Series GS600 is the ideal price/performance choice for mid-spec gaming PC",
+        "title": "Corsair GS600 600 Watt PSU7",
+        "productInfo": "The Corsair Gaming Series GS600 power supply is the ideal price-performance solution for building or upgrading a Gaming PC. A single +12V rail provides up to 48A of reliable, continuous power for multi-core gaming PCs with multiple graphics cards. The ultra-quiet, dual ball-bearing fan automatically adjusts its speed according to temperature, so it will never intrude on your music and games. Blue LEDs bathe the transparent fan blades in a cool glow. Not feeling blue? You can turn off the lighting with the press of a button.",
+        "price": 1241,
+        "category": {
+          "title": "category",
+          "parent": null,
+          "characteristics": [
+            {
+              "name": "cpu",
+              "value": null
+            },
+            {
+              "name": "gpu",
+              "value": null
+            },
+            {
+              "name": "ram",
+              "value": null
+            },
+            {
+              "name": "rom",
+              "value": null
+            },
+            {
+              "name": "box",
+              "value": null
+            },
+            {
+              "name": "fan",
+              "value": null
+            },
+            {
+              "name": "ports",
+              "value": null
+            }
+          ],
+          "description": ""
+        },
+        "characteristic": [
+          {
+            "name": "cpu",
+            "value": "12"
+          },
+          {
+            "name": "gpu",
+            "value": "2"
+          },
+          {
+            "name": "ram",
+            "value": "32"
+          },
+          {
+            "name": "rom",
+            "value": "87"
+          },
+          {
+            "name": "box",
+            "value": "678"
+          },
+          {
+            "name": "fan",
+            "value": "87"
+          },
+          {
+            "name": "ports",
+            "value": "87"
+          }
+        ],
+        "tags": [
+          "Corsair GS600 600 Watt PSU7",
+          "cpu",
+          "gpu",
+          "ram",
+          "rom",
+          "box",
+          "fan",
+          "ports",
+          "category"
+        ],
+        "account": "test",
+        "enabled": true
+      },
+      "@version": "1"
+    }
+  },
+  {
+    "_index": "viewing_products",
+    "_type": "doc",
+    "_id": "admin_5b65a5ea4240c53b29fe1461",
+    "_score": 1,
+    "_source": {
+      "@timestamp": "2018-08-18T15:55:35.507Z",
+      "sessionId": "admin",
+      "product": {
+        "id": "5b65a5ea4240c53b29fe1461",
+        "date": "2018-08-18T19:55:35.503",
+        "description": "The Corsair Gaming Series GS600 is the ideal price/performance choice for mid-spec gaming PC",
+        "title": "Corsair GS600 600 Watt PSU9",
+        "productInfo": "The Corsair Gaming Series GS600 power supply is the ideal price-performance solution for building or upgrading a Gaming PC. A single +12V rail provides up to 48A of reliable, continuous power for multi-core gaming PCs with multiple graphics cards. The ultra-quiet, dual ball-bearing fan automatically adjusts its speed according to temperature, so it will never intrude on your music and games. Blue LEDs bathe the transparent fan blades in a cool glow. Not feeling blue? You can turn off the lighting with the press of a button.",
+        "price": 1243,
+        "category": {
+          "title": "category",
+          "parent": null,
+          "characteristics": [
+            {
+              "name": "cpu",
+              "value": null
+            },
+            {
+              "name": "gpu",
+              "value": null
+            },
+            {
+              "name": "ram",
+              "value": null
+            },
+            {
+              "name": "rom",
+              "value": null
+            },
+            {
+              "name": "box",
+              "value": null
+            },
+            {
+              "name": "fan",
+              "value": null
+            },
+            {
+              "name": "ports",
+              "value": null
+            }
+          ],
+          "description": ""
+        },
+        "characteristic": [],
+        "tags": [
+          "Corsair GS600 600 Watt PSU9",
+          "cpu",
+          "gpu",
+          "ram",
+          "rom",
+          "box",
+          "fan",
+          "ports",
+          "category"
+        ],
+        "account": "test",
+        "enabled": true
+      },
+      "@version": "1"
+    }
+  },
+  {
+    "_index": "viewing_products",
+    "_type": "doc",
+    "_id": "admin_5b65a5e94240c53b29fe1455",
+    "_score": 1,
+    "_source": {
+      "@timestamp": "2018-08-18T15:55:32.269Z",
+      "sessionId": "admin",
+      "product": {
+        "id": "5b65a5e94240c53b29fe1455",
+        "date": "2018-08-18T19:55:32.253",
+        "description": "The Corsair Gaming Series GS600 is the ideal price/performance choice for mid-spec gaming PC",
+        "title": "Corsair GS600 600 Watt PSU1",
+        "productInfo": "The Corsair Gaming Series GS600 power supply is the ideal price-performance solution for building or upgrading a Gaming PC. A single +12V rail provides up to 48A of reliable, continuous power for multi-core gaming PCs with multiple graphics cards. The ultra-quiet, dual ball-bearing fan automatically adjusts its speed according to temperature, so it will never intrude on your music and games. Blue LEDs bathe the transparent fan blades in a cool glow. Not feeling blue? You can turn off the lighting with the press of a button.",
+        "price": 1235,
+        "category": {
+          "title": "category",
+          "parent": null,
+          "characteristics": [
+            {
+              "name": "cpu",
+              "value": null
+            },
+            {
+              "name": "gpu",
+              "value": null
+            },
+            {
+              "name": "ram",
+              "value": null
+            },
+            {
+              "name": "rom",
+              "value": null
+            },
+            {
+              "name": "box",
+              "value": null
+            },
+            {
+              "name": "fan",
+              "value": null
+            },
+            {
+              "name": "ports",
+              "value": null
+            }
+          ],
+          "description": ""
+        },
+        "characteristic": [],
+        "tags": [
+          "Corsair GS600 600 Watt PSU1",
+          "cpu",
+          "gpu",
+          "ram",
+          "rom",
+          "box",
+          "fan",
+          "ports",
+          "category"
+        ],
+        "account": "test",
+        "enabled": true
+      },
+      "@version": "1"
+    }
+  }
+]
